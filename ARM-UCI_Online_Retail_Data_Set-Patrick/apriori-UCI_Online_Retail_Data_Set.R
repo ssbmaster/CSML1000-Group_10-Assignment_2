@@ -1,8 +1,21 @@
+# Combine two data frames ----
+
+dat1<-read.csv("./data/OnlineRetail.csv")
+dat2<-read.csv("./data/OnlineRetail.csv")
+
+combined <- rbind (dat1, dat2)
+
+write.csv(combined, "./data/online_retail_II_combined.csv")
+
+
+# aPriori ---------------------------------------------------------------------
+
 #libraries
 library(arules)
 
 # Reading the data file
 mydata<-read.csv("./data/OnlineRetail.csv")
+
 
 #remove 1st column (counting # of items in basket)
 #mydata <- mydata[,-1]
@@ -30,3 +43,13 @@ itemFrequencyPlot(trans,topN=20,type="relative",main="Relative Item Frequency Pl
 association.rules <- apriori(trans, parameter = list(supp=0.01, conf=0.7,maxlen=100))
 
 inspect(association.rules)
+
+
+# FP-Growth ---------------------------------------------------------------------
+
+library(rCBA)
+
+mydata<-read.csv("./data/OnlineRetail.csv")
+
+fpgrowth(train, support = 0.01, confidence = 1, maxLength = 5, consequent = NULL, verbose = TRUE, parallel = TRUE)
+
