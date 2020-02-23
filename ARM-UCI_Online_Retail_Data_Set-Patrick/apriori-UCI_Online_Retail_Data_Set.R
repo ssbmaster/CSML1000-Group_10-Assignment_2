@@ -27,6 +27,6 @@ trans <- read.transactions(
 
 itemFrequencyPlot(trans,topN=20,type="relative",main="Relative Item Frequency Plot")
 
-association.rules <- apriori(trans, parameter = list(supp=0.01, conf=0.7,maxlen=15))
+association.rules <- apriori(trans, parameter = list(supp=0.01, conf=0.7,maxlen=100))
 
 inspect(association.rules)
