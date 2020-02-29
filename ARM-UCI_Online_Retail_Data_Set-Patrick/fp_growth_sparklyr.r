@@ -6,7 +6,11 @@ library(visNetwork)
 #spark_install_tar('C:\\Users\\alexf\\Downloads\\spark-2.4.3-bin-hadoop2.7.tgz')
 
 #### spark connect #########################################
-sc <- spark_connect(master = "local")
+conf <- spark_config()
+conf$`sparklyr.cores.local` <- 4
+conf$`sparklyr.shell.driver-memory` <- "6G"
+conf$spark.memory.fraction <- 0.9
+sc <- spark_connect(master = "local", config = conf)
 
 # colvec <- c("InvoiceNo","Description")
 # 
@@ -18,8 +22,8 @@ sc <- spark_connect(master = "local")
 #   cols=colvec,
 #   rm.duplicates = T
 # )
-data<-read.csv("./data/online_retail_II_combined_clean.csv")
-data_cols_removed <- data[ -c(1, 2, 4, 6:10) ]
+data<-read.csv("./data/online_retail_II_combined.csv")
+data_cols_removed <- data[ -c(1, 3, 5, 6:9) ]
 train <- sapply(data_cols_removed, as.factor)
 train <- data.frame(train, check.names=FALSE)
 
@@ -108,7 +112,7 @@ plot_rules = function(rules, LHS = "LHSitem0", RHS = "RHSitem0", cf = 0.5)
     )
 }
 
-
+#memory.limit(size = 56000)
 
 GroceryRules = FPGmodel %>% ml_fpgrowth_extract_rules()
 
