@@ -1,0 +1,13 @@
+name: CSML1000-Group_10-Assignment_2
+title: CSML1000-Group_10-Assignment_2
+username:
+account: patrick-osborne
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1883654
+bundleId: 2840616
+url: https://patrick-osborne.shinyapps.io/CSML1000-Group_10-Assignment_2/
+when: 1583017566.86208
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: testinput.RData|testRECOM.RData|tonyOriginal.R

@@ -49,17 +49,25 @@ itemFrequencyPlot(trans,topN=20,type="absolute",main="Absolute Item Frequency Pl
 
 association.rules <- apriori(trans, parameter = list(supp=0.005, conf=0.5,maxlen=20))
 
+
+
 inspect(association.rules)
 
+# value exploration for shiny app ----
 
+arulesDF <- DATAFRAME(association.rules)
+summary(arulesDF)
 
+# subsetting test work ----
 #generate sample shopping cart
-cart <- c("CHARLOTTE BAG SUKI DESIGN",                                                                                           
-  "PACK OF 72 RETROSPOT CAKE CASES",                                                                                     
-  "RED RETROSPOT CHARLOTTE BAG",                                                                                         
-  "REGENCY CAKESTAND 3 TIER",                                                                                            
-  "WOODLAND CHARLOTTE BAG")
+#cart <- c("CHARLOTTE BAG SUKI DESIGN",                                                                                           
+#  "PACK OF 72 RETROSPOT CAKE CASES",                                                                                     
+#  "RED RETROSPOT CHARLOTTE BAG",                                                                                         
+#  "REGENCY CAKESTAND 3 TIER",                                                                                            
+#  "WOODLAND CHARLOTTE BAG")
 
+load("testinput.RData")
+cart <- testinput
 #cart <- as(list(cart), "itemMatrix")
 
 #generaet a subset of the full list of rules, where the lhs matches an exact subset of the cart and the rhs
@@ -79,7 +87,22 @@ print(recom$RHS, max.levels = 0)
 #export rules data to file
 save(association.rules, file="rules.RData")
 
-#EXTRA PLOTTING TEST FOR VIS DELETE LATER
+#SHINY app file generation ----
+
+inventory <- mydata[!duplicated(mydata$Description), ]
+inventory <- inventory[order(inventory$Description),]
+inventory <- data.frame(inventory, stringsAsFactors = FALSE)
+i <- sapply(inventory, is.factor)
+inventory[i] <- lapply(inventory[i], as.character)
+inventory <- inventory[-c(1:3,6:7, 9:10)]
+
+cartitems <- inventory
+cartitems <- subset(cartitems, cartitems$Description %in% "CHARLOTTE BAG PINK POLKADOT")
+
+
+save(inventory, file="../shiny-dev/inventory.RData")
+
+#EXTRA PLOTTING TEST FOR VIS DELETE LATER ----
 library(RColorBrewer)
 library(ggplot2)
 outlineColour = brewer.pal(9, "Set1") #colour palette for outlining graphs
@@ -102,3 +125,7 @@ freqPlot <- ggplot(data=descripsSubset, aes(x = reorder(descripsSubset$Var1, -de
   theme(axis.text.x=element_text(angle=65,hjust=1))
   
 freqPlot
+
+# more testing ----
+
+plot(apriori.rules, measure = c("support", "lift"), shading = "confidence", interactive = TRUE)
