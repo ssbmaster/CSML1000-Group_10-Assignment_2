@@ -8,11 +8,9 @@
 #
 
 library(shiny)
-library(rpart)
-library(leaflet)
 library(ggplot2)
 library(htmltools)
-library(sf)
+library(DT)
 
 # Load the once per session stuff here; most efficient outside of server/ui functions
 load("rules.RData")
@@ -55,13 +53,16 @@ ui <- fluidPage(
 
         # Show beautiful visuals to the right of the sidepanel!
         mainPanel(
-            
+#            fluidRow(column(2,
             # Can use tags$xxx() to represent xxx html tags, HTML("html stuff") to interpret HTML
             tags$p("Check out our:",
                    tags$a(href = "https://github.com/patrick-osborne/CSML1000-Group_10-Assignment_2/", "Github")),
             
-            # UI receive and output the leaflet
-            "SHOPPING CART HERE LOL"
+            tabsetPanel(type = "tabs",
+                        tabPanel("Manager's Console", DTOutput ("console")),
+                        tabPanel("Shopping Cart", DTOutput('cart'))
+                        )
+#            ))
         )
     )
 )
@@ -69,57 +70,59 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
     
+    output$console <- renderDataTable(as.data.frame(c("item1", "item2", "item3")))
+    output$cart <- renderDataTable(as.data.frame(c("test1", "test2", "test3")))
     # Use reactive() to have immediate update from UI interaction, with caching
-    crashMonth <- reactive({input$crashmonth})
-    crashDay <- reactive({input$crashday})
-    crashHour <- reactive({input$crashhour})
-    crashDayOfWeek <- reactive({input$crashdayofweek})
+    # crashMonth <- reactive({input$crashmonth})
+    # crashDay <- reactive({input$crashday})
+    # crashHour <- reactive({input$crashhour})
+    # crashDayOfWeek <- reactive({input$crashdayofweek})
     
     # Render the map for the first time
-    output$mymap <- renderLeaflet({
-        leaflet(precinctMap) %>%
-            addTiles() %>%
-            setView(-74.00, 40.71, zoom = 10) %>%
-            addPolygons(color = "#777777", weight = 1, smoothFactor = 0.5,
-                        opacity = 1.0, fillOpacity = 0.5,
-                        highlightOptions = highlightOptions(color = "white", weight = 2,
-                                                            bringToFront = TRUE),
-                        popup = ~htmlEscape(paste("Precinct #:", precinct))) %>%
-            addProviderTiles("CartoDB.Positron")})
+    # output$mymap <- renderLeaflet({
+    #     leaflet(precinctMap) %>%
+    #         addTiles() %>%
+    #         setView(-74.00, 40.71, zoom = 10) %>%
+    #         addPolygons(color = "#777777", weight = 1, smoothFactor = 0.5,
+    #                     opacity = 1.0, fillOpacity = 0.5,
+    #                     highlightOptions = highlightOptions(color = "white", weight = 2,
+    #                                                         bringToFront = TRUE),
+    #                     popup = ~htmlEscape(paste("Precinct #:", precinct))) %>%
+    #         addProviderTiles("CartoDB.Positron")})
         
     # React to a the button click
-    observeEvent(input$predictbutton, {
-                            # Make a dataframe from the inputs. Week has no consequence to this test model I think, using 1. 
-                            precinct <- as.character(precinctNum$Precinct.No)
-                            month <- as.integer(crashMonth())
-                            week <- as.integer(1)
-                            day <- as.integer(crashDay())
-                            weekday = as.integer(crashDayOfWeek())
-                            hour = as.integer(crashHour())
-                            predictMe <- data.frame(precinct, month, week, day, weekday, hour, stringsAsFactors = FALSE)
-                            predictedVals <- predict(regTreeModel, predictMe)
-                            predictedVals <- predictedVals * 100
-                            
-                            # The prediction logic and output to UI.
-                            # "Breaks are not unique" here would mean that the probability is the same throughout; it complains.
-                            binpal <- colorBin("YlOrRd", predictedVals, 3, pretty = TRUE)
-                            output$mymap <- renderLeaflet({
-                                leaflet(precinctMap) %>%
-                                clearShapes() %>%
-                                addTiles() %>%
-                                setView(-74.00, 40.71, zoom = 10) %>%
-                                addPolygons(color = ~binpal(predictedVals), weight = 1, smoothFactor = 0.5,
-                                            opacity = 1.0, fillOpacity = 0.5,
-                                            highlightOptions = highlightOptions(color = "white", weight = 2,
-                                                                                bringToFront = TRUE),
-                                            popup = ~htmlEscape(paste("Precinct #:", precinct))) %>%
-                                addLegend(pal = binpal, values = ~predictedVals, 
-                                          title = "Crash Probability", 
-                                          labFormat = labelFormat(suffix = "%"),
-                                          opacity = 1) %>%
-                                addProviderTiles("CartoDB.Positron")})
-                            }
-    )
+    # observeEvent(input$predictbutton, {
+    #                         # Make a dataframe from the inputs. Week has no consequence to this test model I think, using 1. 
+    #                         precinct <- as.character(precinctNum$Precinct.No)
+    #                         month <- as.integer(crashMonth())
+    #                         week <- as.integer(1)
+    #                         day <- as.integer(crashDay())
+    #                         weekday = as.integer(crashDayOfWeek())
+    #                         hour = as.integer(crashHour())
+    #                         predictMe <- data.frame(precinct, month, week, day, weekday, hour, stringsAsFactors = FALSE)
+    #                         predictedVals <- predict(regTreeModel, predictMe)
+    #                         predictedVals <- predictedVals * 100
+    #                         
+    #                         # The prediction logic and output to UI.
+    #                         # "Breaks are not unique" here would mean that the probability is the same throughout; it complains.
+    #                         binpal <- colorBin("YlOrRd", predictedVals, 3, pretty = TRUE)
+    #                         output$mymap <- renderLeaflet({
+    #                             leaflet(precinctMap) %>%
+    #                             clearShapes() %>%
+    #                             addTiles() %>%
+    #                             setView(-74.00, 40.71, zoom = 10) %>%
+    #                             addPolygons(color = ~binpal(predictedVals), weight = 1, smoothFactor = 0.5,
+    #                                         opacity = 1.0, fillOpacity = 0.5,
+    #                                         highlightOptions = highlightOptions(color = "white", weight = 2,
+    #                                                                             bringToFront = TRUE),
+    #                                         popup = ~htmlEscape(paste("Precinct #:", precinct))) %>%
+    #                             addLegend(pal = binpal, values = ~predictedVals, 
+    #                                       title = "Crash Probability", 
+    #                                       labFormat = labelFormat(suffix = "%"),
+    #                                       opacity = 1) %>%
+    #                             addProviderTiles("CartoDB.Positron")})
+    #                         }
+    #)
     # The prediction logic and output to UI.
     # THIS: leafletProxy doesn't work for some reason. Since this doesn't work, the app is less performant.
     # leafletProxy("mymap", precinctMap) %>%
