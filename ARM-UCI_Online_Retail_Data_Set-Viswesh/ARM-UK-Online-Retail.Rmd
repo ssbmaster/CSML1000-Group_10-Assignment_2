@@ -1,18 +1,15 @@
 ---
 title: "Association Rule Mining for a UK Online Retail Company"
 author:
-- name: Alex Fung
-- name: Patrick Osborne
-- name: Tony Lee
-- name: Viswesh Krishnamurthy
+- Alex Fung
+- Viswesh Krishnamurthy
+- Tony Lee
+- Patrick Osborne
+output: pdf_document
 date: "Feb 26, 2020"
-output:
-  pdf_document: default
-  html_document: default
 ---
 
-
-```{r, echo=FALSE, message = FALSE, warning = FALSE, error = FALSE}
+```{r, initial_setup, echo=FALSE, message = FALSE, warning = FALSE, error = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 #loading libraries
 library(arules)
