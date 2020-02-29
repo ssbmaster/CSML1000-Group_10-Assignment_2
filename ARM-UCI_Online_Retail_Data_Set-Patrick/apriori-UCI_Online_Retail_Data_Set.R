@@ -1,11 +1,11 @@
 # Combine two data frames ----
 
-dat1<-read.csv("./data/OnlineRetail.csv")
-dat2<-read.csv("./data/OnlineRetail.csv")
+#dat1<-read.csv("./data/OnlineRetail.csv")
+#dat2<-read.csv("./data/OnlineRetail.csv")
 
-combined <- rbind (dat1, dat2)
+#combined <- rbind (dat1, dat2)
 
-write.csv(combined, "./data/online_retail_II_combined.csv")
+#write.csv(combined, "./data/online_retail_II_combined.csv")
 
 
 # aPriori ---------------------------------------------------------------------
@@ -40,16 +40,33 @@ trans <- read.transactions(
 
 itemFrequencyPlot(trans,topN=20,type="relative",main="Relative Item Frequency Plot")
 
-association.rules <- apriori(trans, parameter = list(supp=0.01, conf=0.7,maxlen=100))
+association.rules <- apriori(trans, parameter = list(supp=0.005, conf=0.5,maxlen=5))
 
 inspect(association.rules)
 
+#save(association.rules, file="rules.RData")
 
-# FP-Growth ---------------------------------------------------------------------
+#generate sample shopping cart
+cart <- c("ALARM CLOCK BAKELIKE GREEN", 
+          "ALARM CLOCK BAKELIKE PINK",
+          "REGENCY TEA PLATE ROSES ", 
+          "GREEN REGENCY TEACUP AND SAUCER",
+          "ALARM CLOCK BAKELIKE RED ",
+          "REGENCY CAKESTAND 3 TIER")
 
-library(rCBA)
+#cart <- as(list(cart), "itemMatrix")
 
-mydata<-read.csv("./data/OnlineRetail.csv")
+#generaet a subset of the full list of rules, where the lhs matches an exact subset of the cart and the rhs
+#does not match an exact subset of the cart (rhs is not already in cart)
+rules.sub <- subset(association.rules, subset = lhs %oin% cart & !(rhs %oin% cart))
+#rules.sub <- is.subset(association.rules, cart, proper = FALSE)
 
-fpgrowth(train, support = 0.01, confidence = 1, maxLength = 5, consequent = NULL, verbose = TRUE, parallel = TRUE)
+#shows subset of rules matching cart
+inspect(rules.sub)
+
+#converts subset of rules to data frame, separating out lhs and rhs
+recom <- DATAFRAME(rules.sub, separate=TRUE)
+
+#prints out only rhs (will be used to generate recommendation)
+print(recom$RHS, max.levels = 0)
 
