@@ -12,12 +12,12 @@
 library(rCBA)
 library(arules)
 
-data<-read.csv("./data/online_retail_II_combined.csv")
+data<-read.csv("./data/online_retail_II_combined_clean.csv")
 
 colvec <- c("InvoiceNo","Description")
 
 trans <- arules::read.transactions(
-  file = "./data/OnlineRetail.csv",
+  file = "./data/online_retail_II_combined_clean.csv",
   format = "single",
   header = TRUE,
   sep = ",",
@@ -25,14 +25,14 @@ trans <- arules::read.transactions(
   rm.duplicates = T
 )
 memory.limit(size = 56000)
-data<-read.csv("./data/OnlineRetail.csv")
+data<-read.csv("./data/online_retail_II_combined_clean.csv")
 data <- data[ -c(2, 4:8) ]
 train <- sapply(data, as.factor)
 train <- data.frame(train, check.names=FALSE)
 txns <- as(train,"transactions")
 
 
-association.rules = rCBA::fpgrowth(txns, support = 0.001, confidence = 0.7, maxLength = 5,
+association.rules = rCBA::fpgrowth(txns, support = 0.005, confidence = 0.5, maxLength = 20,
          consequent = "Description", verbose = TRUE, parallel = FALSE)
 
 

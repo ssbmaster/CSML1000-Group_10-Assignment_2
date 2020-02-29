@@ -14,8 +14,14 @@
 library(arules)
 
 # Reading the data file
-mydata<-read.csv("./data/OnlineRetail.csv")
+#mydata<-read.csv("./data/OnlineRetail.csv")
+#mydata<-read.csv("./data/online_retail_II_combined.csv")
+#mydata <- mydata[-grep("C", mydata$InvoiceNo),] 
+#mydata <- mydata[-grep("A", mydata$InvoiceNo),]
+#mydata <- mydata[!(mydata$Description == ""),]
+#mydata <- mydata[!(mydata$Description == "DOTCOM POSTAGE"),]
 
+#write.csv(mydata, "./data/online_retail_II_combined_clean.csv")
 
 #remove 1st column (counting # of items in basket)
 #mydata <- mydata[,-1]
@@ -30,7 +36,7 @@ colvec <- c("InvoiceNo","Description")
 
 # read transactions from csv
 trans <- read.transactions(
-  file = "./data/OnlineRetail.csv",
+  file = "./data/online_retail_II_combined_clean.csv",
   format = "single",
   header = TRUE,
   sep = ",",
@@ -38,21 +44,20 @@ trans <- read.transactions(
   rm.duplicates = T
 )
 
-itemFrequencyPlot(trans,topN=20,type="relative",main="Relative Item Frequency Plot")
+itemFrequencyPlot(trans,topN=20,type="absolute",main="Absolute Item Frequency Plot")
 
-association.rules <- apriori(trans, parameter = list(supp=0.005, conf=0.5,maxlen=5))
+association.rules <- apriori(trans, parameter = list(supp=0.005, conf=0.5,maxlen=20))
 
 inspect(association.rules)
 
-#save(association.rules, file="rules.RData")
+
 
 #generate sample shopping cart
-cart <- c("ALARM CLOCK BAKELIKE GREEN", 
-          "ALARM CLOCK BAKELIKE PINK",
-          "REGENCY TEA PLATE ROSES ", 
-          "GREEN REGENCY TEACUP AND SAUCER",
-          "ALARM CLOCK BAKELIKE RED ",
-          "REGENCY CAKESTAND 3 TIER")
+cart <- c("CHARLOTTE BAG SUKI DESIGN",                                                                                           
+  "PACK OF 72 RETROSPOT CAKE CASES",                                                                                     
+  "RED RETROSPOT CHARLOTTE BAG",                                                                                         
+  "REGENCY CAKESTAND 3 TIER",                                                                                            
+  "WOODLAND CHARLOTTE BAG")
 
 #cart <- as(list(cart), "itemMatrix")
 
@@ -70,3 +75,5 @@ recom <- DATAFRAME(rules.sub, separate=TRUE)
 #prints out only rhs (will be used to generate recommendation)
 print(recom$RHS, max.levels = 0)
 
+#export rules data to file
+save(association.rules, file="rules.RData")
