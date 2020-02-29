@@ -18,85 +18,57 @@ load("rules.RData")
 # Define UI for application that draws a histogram
 ui <- fluidPage(
     
+    # Application title
     titlePanel("Shopping Cart Recommendations"),
-    tags$p("Check out our:",
-           tags$a(href = "https://github.com/patrick-osborne/CSML1000-Group_10-Assignment_2/", "Github")),
-    tabsetPanel(type = "tabs",
-                #Manager's Console Code Block ----
-                tabPanel("Manager's Console", 
-                         
-                         sidebarLayout(
-                             sidebarPanel(
-                                 selectInput("model",
-                                             "ML Model:",
-                                             choices=c("Apriori", "ECLAT", "FP-Growth")),
-                                 sliderInput("confidence",
-                                             "Confidence:",
-                                             min = 0.5,
-                                             max = 1,
-                                             value = 0.7),
-                                 sliderInput("support",
-                                             "Support:",
-                                             min = 0.005,
-                                             max = 0.03,
-                                             value = 0.01),
-                                 sliderInput("lift",
-                                             "Lift:",
-                                             min = 1,
-                                             max = 40,
-                                             value = 40),
-                                 sliderInput("count",
-                                             "Count:",
-                                             min = 0,
-                                             max = 600,
-                                             value = 600),
-                                 actionButton("recomButton",
-                                              "Generate Recommendations")
-                             ),
-                             
-                             # Show beautiful visuals to the right of the sidepanel!
-                             mainPanel(
-                                 
-                                 DTOutput ("console"),
-                                 
-                             )
-                             
-                         )#close sidebar layout
-                         
-                ),
-
-                #User's Shopping Cart Code Block ----
-                tabPanel("User's Shopping Cart",
-                         # Application title
-                         
-                         # Sidebar with a slider input for number of bins 
-                         sidebarLayout(
-                             sidebarPanel(
-                                 selectInput("model",
-                                             "ML Model:",
-                                             choices=c("Apriori", "ECLAT", "FP-Growth")),
-                                 sliderInput("confidence",
-                                             "Confidence:",
-                                             min = 0.5,
-                                             max = 1,
-                                             value = 0.7),
-                                  actionButton("recomButton",
-                                              "Generate Recommendations")
-                             ),
-                             
-                             # Show beautiful visuals to the right of the sidepanel!
-                             mainPanel(
-                                 
-                                 DTOutput ("cart"),
-                                 
-                             )
-                             
-                         )#close sidebar layout
-                         
-                )#close tabpanel
-                
-    )
     
+    # Sidebar with a slider input for number of bins 
+    sidebarLayout(
+        sidebarPanel(
+            selectInput("model",
+                        "ML Model:",
+                        choices=c("Apriori", "ECLAT", "FP-Growth")),
+            sliderInput("confidence",
+                        "Confidence:",
+                        min = 0.5,
+                        max = 1,
+                        value = 0.7),
+            sliderInput("support",
+                        "Support:",
+                        min = 0.005,
+                        max = 0.03,
+                        value = 0.01),
+            sliderInput("lift",
+                        "Lift:",
+                        min = 1,
+                        max = 40,
+                        value = 40),
+            sliderInput("count",
+                        "Count:",
+                        min = 0,
+                        max = 600,
+                        value = 600),
+            actionButton("recomButton",
+                         "Generate Recommendations")
+        ),
+        
+        # Show beautiful visuals to the right of the sidepanel!
+        mainPanel(
+            #            fluidRow(column(2,
+            # Can use tags$xxx() to represent xxx html tags, HTML("html stuff") to interpret HTML
+            tags$p("Check out our:",
+                   tags$a(href = "https://github.com/patrick-osborne/CSML1000-Group_10-Assignment_2/", "Github")),
+            
+            tabsetPanel(type = "tabs",
+                        tabPanel("Manager's Console", DTOutput ("console")),
+                        tabPanel("Shopping Cart",
+                                 DTOutput('cart'),
+                                 actionButton("addToCartButton",
+                                              "Add to Cart"),
+                                 textOutput("msg")
+                        )            )
+            #            ))
+        )
+    )
 )
 
 # Define server logic required to draw a histogram
