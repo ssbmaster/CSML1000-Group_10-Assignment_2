@@ -80,7 +80,9 @@ ui <- fluidPage(
                                                  )
                                      ),
                                      actionButton("addCart",
-                                                  "Add Items to Cart")
+                                                  "Add Items to Cart"),
+                                     actionButton("clearCart",
+                                                  "Clear Cart")
                                  ),
                                  
                                  # Show beautiful visuals to the right of the sidepanel!
@@ -97,7 +99,7 @@ ui <- fluidPage(
 )
 
 # Define server logic required to draw a histogram
-server <- function(input, output) {
+server <- function(session, input, output) {
     output$console <- renderDataTable(assoc.rules.DF, rownames=FALSE)
     output$cart <- renderDataTable(emptyCartDataframe, 
                                    rownames=FALSE, 
@@ -158,12 +160,18 @@ server <- function(input, output) {
         # save(rules.subDF, file="testRECOM.RData")
     })
     
-    # List of the items to be added to cart
-    observeEvent(input$addToCartButton, {
-        itemsToCart <- input$cart_cell_clicked
-        output$msg <- renderText({paste("You have selected", itemsToCart$value)})
-    }
-    )
+    observeEvent(input$clearCart, {
+        output$cart <- renderDataTable(emptyCartDataframe, 
+                                       rownames=FALSE, 
+                                       options=list(pageLength=9))
+        output$recom <- renderDataTable(emptyCartDataframe, 
+                                        rownames=FALSE, 
+                                        options=list(pageLength=9))
+        updatePickerInput(
+            session, 
+            "cartSelect", 
+            selected = "")
+    })
     
 }
 
