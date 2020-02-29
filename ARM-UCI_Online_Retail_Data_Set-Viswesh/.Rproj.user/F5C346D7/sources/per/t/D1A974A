@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1582488686491.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "193836973",
+    "id" : "D1A974A",
+    "lastKnownWriteTime" : 1582488277,
+    "last_content_update" : 1582488277,
+    "path" : "C:/Users/posborne/OneDrive - York University/Desktop/Certificate in Machine Learning/#R Projects/Assignment 2/ARM-UCI_Online_Retail_Data_Set/ARM-UCI_Online_Retail_Data_Set.R",
+    "project_path" : "ARM-UCI_Online_Retail_Data_Set.R",
+    "properties" : {
+        "cursorPosition" : "8,0",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

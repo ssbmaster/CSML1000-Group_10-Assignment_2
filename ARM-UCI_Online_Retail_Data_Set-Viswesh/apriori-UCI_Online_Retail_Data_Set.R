@@ -6,12 +6,15 @@ library(arulesViz)
 
 # Reading the data file
 mydata<-read.csv("./data/OnlineRetail.csv")
+mydata <- mydata[-grep("C", mydata$InvoiceNo),] 
+mydata <- mydata[-grep("A", mydata$InvoiceNo),]
+mydata <- mydata[!(mydata$Description == ""),]
 
 #remove 1st column (counting # of items in basket)
 #mydata <- mydata[,-1]
 
-#write updated CSV with removed column
-#mydata <- write.csv(mydata, "./data/groceriesClean.csv")
+#write updated CSV with cleaned InvoiceNo column
+mydata <- write.csv(mydata, "./data/OnlineRetail1.csv")
 
 #read updated CSV into transactions object
 #trans <- read.transactions("./data/groceriesClean.csv", format="single", sep=",", cols=1)
@@ -40,9 +43,10 @@ inspect(apriori.rules)
 
 #ECLAT algorithm
 eclat.itemset <- eclat(trans, parameter = list(supp=0.01,maxlen=5))
-eclat.rules <- ruleInduction(eclat.itemset, trans, confidence = 0.7)
+eclat.rules <- ruleInduction(eclat.itemset, trans, confidence = 0.75)
 inspect(eclat.rules)
 
 #plot rules
 plot(apriori.rules, method = "graph")
 plot(eclat.rules, method = "graph")
+
