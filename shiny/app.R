@@ -24,9 +24,6 @@ recItemsDF <- inventory[0,]
 assoc.rules.DF <- DATAFRAME(association.rules, separate=TRUE)
 aprioriVar <- TRUE
 
-# Make a new function called trim to trim whitespaces front and back
-trim <- function (x) gsub("^\\s+|\\s+$", "", x)
-
 # Define UI for application
 ui <- fluidPage(
     fluidRow(
@@ -176,7 +173,7 @@ server <- function(session, input, output) {
             if(length(rules.sub) > 0){
                 # Convert that rules subset into a dataframe (DATAFRAME() is from arules)
                 rules.subDF <- DATAFRAME(rules.sub, separate=TRUE)
-                
+                trim(rules.subDF$RHS)
                 # Match the RHS up with inventory to get the StockCode and UnitPrice
                 # Line immediately below not working properly...so commented out
                 # recItemsDF <- inventory[trim(gsub("[{]|[}]", "", rules.subDF$RHS)) == trim(inventory$Description), ]
@@ -184,7 +181,7 @@ server <- function(session, input, output) {
                 # But this way works...hurray for brute force programming skillz...but this is quite a bit slower
                 for (j in 1:length(rules.subDF$RHS)) {
                     for (i in 1:length(inventory$Description)) {
-                        if (trim(gsub("[{]|[}]", "", rules.subDF$RHS[j])) == trim(inventory$Description[i])) {
+                        if (gsub("[{]|[}]", "", rules.subDF$RHS[j]) == inventory$Description[i]) {
                             recItemsDF <- rbind(recItemsDF, inventory[i,])
                         }
                     }
