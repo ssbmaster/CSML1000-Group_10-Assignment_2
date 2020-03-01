@@ -43,6 +43,8 @@ eclat.itemset <- eclat(trans, parameter = list(supp=0.005,maxlen=20))
 eclat.rules <- ruleInduction(eclat.itemset, trans, confidence = 0.5)
 inspect(eclat.rules)
 
+save(eclat.rules, file="ECLATrules.RData")
+
 #plot rules
 plot(apriori.rules, method = "graph")
 plot(eclat.rules, method = "graph")
