@@ -90,12 +90,15 @@ save(association.rules, file="rules.RData")
 #SHINY app file generation ----
 
 inventory <- mydata[!duplicated(mydata$Description), ]
+inventory <- inventory[-c(1:3,6:7, 9:10)]
+inventory$UnitPrice <- as.character(inventory$UnitPrice)
+inventory$UnitPrice <- gsub("^0$", "NA", inventory$UnitPrice)
+inventory <- inventory[!inventory$UnitPrice == "NA", ]
 inventory <- inventory[order(inventory$Description),]
 inventory <- data.frame(inventory, stringsAsFactors = FALSE)
 i <- sapply(inventory, is.factor)
 inventory[i] <- lapply(inventory[i], as.character)
-inventory <- inventory[-c(1:3,6:7, 9:10)]
-
+inventory$UnitPrice <- as.numeric(inventory$UnitPrice)
 #cartitems <- inventory
 #cartitems <- subset(cartitems, cartitems$Description %in% "CHARLOTTE BAG PINK POLKADOT")
 
