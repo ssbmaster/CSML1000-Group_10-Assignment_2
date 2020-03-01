@@ -95,7 +95,7 @@ inventory <- data.frame(inventory, stringsAsFactors = FALSE)
 i <- sapply(inventory, is.factor)
 inventory[i] <- lapply(inventory[i], as.character)
 inventory <- inventory[-c(1:3,6:7, 9:10)]
-inventory <- inventory[grep("?", inventory$Description),]
+
 #cartitems <- inventory
 #cartitems <- subset(cartitems, cartitems$Description %in% "CHARLOTTE BAG PINK POLKADOT")
 
