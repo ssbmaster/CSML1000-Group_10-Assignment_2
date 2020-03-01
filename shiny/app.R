@@ -173,7 +173,7 @@ server <- function(session, input, output) {
             if(length(rules.sub) > 0){
                 # Convert that rules subset into a dataframe (DATAFRAME() is from arules)
                 rules.subDF <- DATAFRAME(rules.sub, separate=TRUE)
-                trim(rules.subDF$RHS)
+
                 # Match the RHS up with inventory to get the StockCode and UnitPrice
                 # Line immediately below not working properly...so commented out
                 # recItemsDF <- inventory[trim(gsub("[{]|[}]", "", rules.subDF$RHS)) == trim(inventory$Description), ]
