@@ -82,7 +82,8 @@ ui <- fluidPage(
                                      actionButton("addCart",
                                                   "Add Items to Cart"),
                                      actionButton("clearCart",
-                                                  "Clear Cart")
+                                                  "Clear Cart"),
+                                     h5("Looking for some suggestions? 'Alarm Clock', 'Charlotte Bag' and 'Teacup' are always good choices!")
                                  ),
                                  
                                  # Show beautiful visuals to the right of the sidepanel!
@@ -129,25 +130,37 @@ server <- function(session, input, output) {
     })
     
     observeEvent(input$support, {
-        output$console <- renderDataTable(assoc.rules.DF[assoc.rules.DF$support>input$support, ],
+        output$console <- renderDataTable(subset(assoc.rules.DF , assoc.rules.DF$support>input$support 
+                                                 & assoc.rules.DF$confidence>input$confidence
+                                                 & assoc.rules.DF$lift>input$lift
+                                                 & assoc.rules.DF$count>input$count),
                                           rownames=FALSE, 
                                           options=list(pageLength=9))
     })
     
     observeEvent(input$confidence, {
-        output$console <- renderDataTable(assoc.rules.DF[assoc.rules.DF$confidence>input$confidence, ], 
+        output$console <- renderDataTable(subset(assoc.rules.DF , assoc.rules.DF$support>input$support 
+                                                 & assoc.rules.DF$confidence>input$confidence
+                                                 & assoc.rules.DF$lift>input$lift
+                                                 & assoc.rules.DF$count>input$count),
                                           rownames=FALSE, 
                                           options=list(pageLength=9))
     })
     
     observeEvent(input$lift, {
-        output$console <- renderDataTable(assoc.rules.DF[assoc.rules.DF$lift>input$lift, ], 
+        output$console <- renderDataTable(subset(assoc.rules.DF , assoc.rules.DF$support>input$support 
+                                                 & assoc.rules.DF$confidence>input$confidence
+                                                 & assoc.rules.DF$lift>input$lift
+                                                 & assoc.rules.DF$count>input$count),
                                           rownames=FALSE, 
                                           options=list(pageLength=9))
     })
     
     observeEvent(input$count, {
-        output$console <- renderDataTable(assoc.rules.DF[assoc.rules.DF$count>input$count, ], 
+        output$console <- renderDataTable(subset(assoc.rules.DF , assoc.rules.DF$support>input$support 
+                                                 & assoc.rules.DF$confidence>input$confidence
+                                                 & assoc.rules.DF$lift>input$lift
+                                                 & assoc.rules.DF$count>input$count),
                                           rownames=FALSE, 
                                           options=list(pageLength=9))
     })
@@ -173,10 +186,14 @@ server <- function(session, input, output) {
             if(length(rules.sub) > 0){
                 # Convert that rules subset into a dataframe (DATAFRAME() is from arules)
                 rules.subDF <- DATAFRAME(rules.sub, separate=TRUE)
-
+                
                 # Match the RHS up with inventory to get the StockCode and UnitPrice
                 # Line immediately below not working properly...so commented out
                 # recItemsDF <- inventory[trim(gsub("[{]|[}]", "", rules.subDF$RHS)) == trim(inventory$Description), ]
+                
+                #removes all duplicate RHS values and all columns except RHS
+                rules.subDF <- rules.subDF[ -c(1, 3:6) ]
+                rules.subDF <- unique(rules.subDF)
                 
                 # But this way works...hurray for brute force programming skillz...but this is quite a bit slower
                 for (j in 1:length(rules.subDF$RHS)) {
@@ -186,7 +203,7 @@ server <- function(session, input, output) {
                         }
                     }
                 }
-
+                
                 # Output the data frame of recommendations to recom
                 output$recom <- renderDataTable(recItemsDF, rownames=FALSE)
                 output$emptyMessage <- renderText({ "" })
